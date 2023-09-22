@@ -7,7 +7,7 @@ int main() {
                                       1e-6,  1e-7,  1e-8,  1e-9, 1e-10, 1e-11,
                                       1e-12, 1e-13, 1e-14, 1e-15};
     const std::array<double, N> points{-1, 1};
-    for (int j = 0; j < 16; ++j) {
+    for (unsigned int j = 0; j < 16; ++j) {
         std::cout << std::setprecision(16)
                   << exp_derivative<double, 2>(x_0, step[j], points)
                   << std::endl;
@@ -21,7 +21,7 @@ int main() {
     const unsigned int num = 10000;
     std::vector<double> x = linspace(start, end, num);
     data.open("dataN3.txt");
-    for (int i = 0; i < num; ++i) {
+    for (unsigned int i = 0; i < num; ++i) {
         data << x[i] << " "
              << std::log(std::abs(
                     exp_derivative<double, 3>(x_0, std::exp(x[i]), {-1, 1, 2}) -
@@ -31,7 +31,7 @@ int main() {
     data.close();
 
     data.open("dataN4.txt");
-    for (int i = 0; i < num; ++i) {
+    for (unsigned int i = 0; i < num; ++i) {
         data << x[i] << " "
              << std::log(std::abs(exp_derivative<double, 4>(x_0, std::exp(x[i]),
                                                             {-2, -1, 1, 2}) -
@@ -41,7 +41,7 @@ int main() {
     data.close();
 
     data.open("dataN5.txt");
-    for (int i = 0; i < num; ++i) {
+    for (unsigned int i = 0; i < num; ++i) {
         data << x[i] << " "
              << std::log(std::abs(exp_derivative<double, 5>(x_0, std::exp(x[i]),
                                                             {-2, -1, 1, 2, 3}) -
