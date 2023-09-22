@@ -28,9 +28,11 @@ template <typename RealType, unsigned int N> struct DerivativeCoef {
 template <typename RealType, unsigned int N>
 DerivativeCoef<RealType, N>
 calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
-    Eigen::VectorXd b = Eigen::VectorXd::Zero(N + 1);
+    Eigen::Matrix<RealType, N + 1, 1>b =
+        Eigen::Matrix<RealType, N + 1, 1>::Zero(N + 1);
     b(1) = 1;
-    Eigen::MatrixXd A = Eigen::MatrixXd::Zero(N + 1, N + 1);
+    Eigen::Matrix<RealType, N + 1, N + 1> A =
+        Eigen::Matrix<RealType, N + 1, N + 1>::Zero(N + 1, N + 1);
     for (int i = 0; i <= N; ++i) {
         A(0, i) = 1;
     }
@@ -39,7 +41,7 @@ calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
             A(j, i + 1) = std::pow(points[i], j) / factorial(j);
         }
     }
-    Eigen::VectorXd v_res = A.colPivHouseholderQr().solve(b);
+    Eigen::Matrix<RealType, N + 1, 1> v_res = A.colPivHouseholderQr().solve(b);
 
     std::array<RealType, N> res;
     for (int i = 0; i < N; ++i) {
