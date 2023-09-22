@@ -5,10 +5,6 @@
 #include <iostream>
 #include <vector>
 
-int factorial(const int n) {
-    return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
-}
-
 std::vector<double> linspace(const double start, const double end,
                              const unsigned int N) {
     std::vector<double> res;
@@ -28,7 +24,7 @@ template <typename RealType, unsigned int N> struct DerivativeCoef {
 template <typename RealType, unsigned int N>
 DerivativeCoef<RealType, N>
 calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
-    Eigen::Matrix<RealType, N + 1, 1>b =
+    Eigen::Matrix<RealType, N + 1, 1> b =
         Eigen::Matrix<RealType, N + 1, 1>::Zero(N + 1);
     b(1) = 1;
     Eigen::Matrix<RealType, N + 1, N + 1> A =
@@ -38,7 +34,7 @@ calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
     }
     for (int j = 1; j <= N; ++j) {
         for (int i = 0; i < N; ++i) {
-            A(j, i + 1) = std::pow(points[i], j) / factorial(j);
+            A(j, i + 1) = A(j - 1, i + 1) * points[i] / j;
         }
     }
     Eigen::Matrix<RealType, N + 1, 1> v_res = A.colPivHouseholderQr().solve(b);
