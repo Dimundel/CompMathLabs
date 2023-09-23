@@ -1,0 +1,2 @@
+add_library(CompMathLabs INTERFACE)
+target_include_directories(CompMathLabs INTERFACE numerical_differentiation)
