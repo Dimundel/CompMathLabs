@@ -1,2 +1,2 @@
 add_library(CompMathLabs INTERFACE)
-target_include_directories(CompMathLabs INTERFACE numerical_differentiation)
+target_include_directories(CompMathLabs INTERFACE numerical_differentiation interpolation)

@@ -1,2 +1,5 @@
 add_executable(numerical_differentiation_test numerical_differentiation_test.cpp)
 target_link_libraries(numerical_differentiation_test CompMathLabs gtest)
+
+add_executable(interpolation_test interpolation_test.cpp)
+target_link_libraries(interpolation_test CompMathLabs gtest)
