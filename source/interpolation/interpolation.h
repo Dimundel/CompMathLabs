@@ -25,7 +25,7 @@ public:
                     (m_points[i] - m_points[i - j - 1]);
             }
         }
-    };
+    }
 
     yType interpolate(const xType &x) const noexcept {
         yType res = m_divided_differences[N - 1];
