@@ -9,7 +9,6 @@ std::vector<double> linspace(const double start, const double end,
                              const unsigned int N) {
     std::vector<double> res;
     double delta = (end - start) / N;
-    ;
     for (unsigned int i = 0; i < N; ++i) {
         res.push_back(start + i * delta);
     }
