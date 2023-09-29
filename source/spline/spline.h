@@ -34,8 +34,22 @@ std::vector<DivisType<cType, mType>>
 solve(const ThreeDiagonalMatrix<mType> &matrix,
       const std::vector<cType> &column) {
     std::vector<double> p_vector{0}, q_vector{0};
-    p_vector.reserve(matrix.get_size());
-    q_vector.reserve(matrix.get_size());
+    unsigned int N = column.size() - 1;
+    p_vector.reserve(N);
+    q_vector.reserve(N);
+    for (int i = 0; i < N + 1; ++i) {
+        p_vector.push_back(-1 * matrix(i, i + 1) /
+                           (matrix(i, i - 1) * p_vector[i] + matrix(i, i)));
+        q_vector.push_back((column[i] - matrix(i, i - 1) * q_vector[i]) /
+                           (matrix(i, i - 1) * p_vector[i] + matrix(i, i)));
+    }
+    std::vector<double> solution(N + 1);
+    solution[N] = (column[N] - matrix(N, N - 1) * q_vector[N]) /
+                  (matrix(N, N - 1) * p_vector[N] + matrix(N, N));
+    for (int i = N - 1; i >= 0; --i) {
+        solution[i] = p_vector[i + 1] * solution[i + 1] + q_vector[i + 1];
+    }
+    return solution;
 }
 
 /**
