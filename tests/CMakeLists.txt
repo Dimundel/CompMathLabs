@@ -3,3 +3,6 @@ target_link_libraries(numerical_differentiation_test CompMathLabs gtest)
 
 add_executable(interpolation_test interpolation_test.cpp)
 target_link_libraries(interpolation_test CompMathLabs gtest)
+
+add_executable(three_diagonal_matrix_test three_diagonal_matrix_test.cpp)
+target_link_libraries(three_diagonal_matrix_test CompMathLabs gtest)
