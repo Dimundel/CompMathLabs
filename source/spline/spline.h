@@ -2,6 +2,24 @@
 #include <type_traits>
 #include <vector>
 
+template <typename RealType>
+int find_lower_boundary(const std::vector<RealType> &array, RealType x) {
+    int low = 0;
+    int high = array.size() - 1;
+    int mid;
+    while (low <= high) {
+        mid = low + (high - low) / 2;
+        if (array[mid] == x) {
+            return mid;
+        } else if (array[mid] < x) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    return low - 1;
+}
+
 /** класс для работы с трехдиагональной матрицей **/
 template <typename Type> class ThreeDiagonalMatrix {
     /*** Здесь какие-то поля и методы ***/
@@ -57,12 +75,79 @@ solve(const ThreeDiagonalMatrix<mType> &matrix,
  * yType - тип значения функции y
  */
 template <typename xType, typename yType> class CubicSpline {
-    /*** Какие-то поля ***/
+private:
+    std::vector<xType> m_points;
+    std::vector<yType> m_values;
+    std::vector<DivisType<yType, xType>> m_a;
+    std::vector<DivisType<yType, xType>> m_b;
 
 public:
     CubicSpline(const std::vector<xType> &points, // Значения x
                 const std::vector<yType> &values  // значения y
-    );
+                )
+        : m_points{points}, m_values{values} {
+        unsigned int N = points.size();
+        std::vector<xType> points_differences;
+        points_differences.reserve(N - 1);
+        for (int i = 0; i < N - 1; ++i) {
+            points_differences.push_back(points[i + 1] - points[i]);
+        }
+        std::vector<yType> values_differences;
+        values_differences.reserve(N - 1);
+        for (int i = 0; i < N - 1; ++i) {
+            values_differences.push_back(values[i + 1] - values[i]);
+        }
 
-    yType interpolate(const xType &x) const noexcept;
+        // Matrix initalization
+        std::vector<std::array<DivisType<int, xType>, 3>> data;
+        data.reserve(N);
+        data.push_back(
+            {0, 2 / points_differences[0], 1 / points_differences[0]});
+        for (unsigned int i = 0; i < N - 2; ++i) {
+            data.push_back(
+                {1 / points_differences[i],
+                 (2 / points_differences[i] + 2 / points_differences[i + 1]),
+                 1 / points_differences[i + 1]});
+        }
+        data.push_back(
+            {1 / points_differences[N - 2], 2 / points_differences[N - 2], 0});
+        ThreeDiagonalMatrix matrix(data);
+
+        // Column initialization
+        std::vector<DivisType<yType, xType>> column;
+        column.reserve(N);
+        column.push_back(3 * (values_differences[0]) /
+                         (points_differences[0] * points_differences[0]));
+        for (int i = 0; i < N - 2; ++i) {
+            column.push_back(
+                3 * (values_differences[i] /
+                         (points_differences[i] * points_differences[i]) +
+                     values_differences[i + 1] / (points_differences[i + 1] *
+                                                  points_differences[i + 1])));
+        }
+        column.push_back(
+            3 * (values_differences[N - 2]) /
+            (points_differences[N - 2] * points_differences[N - 2]));
+
+        std::vector<DivisType<yType, xType>> k = solve(matrix, column);
+
+        m_a.reserve(N - 1);
+        for (unsigned int i = 0; i < N - 1; ++i) {
+            m_a.push_back(k[i] * points_differences[i] -
+                          (values_differences[i]));
+        }
+
+        m_b.reserve(N - 1);
+        for (unsigned int i = 0; i < N - 1; ++i) {
+            m_b.push_back((-1) * k[i + 1] * points_differences[i] +
+                          (values_differences[i]));
+        }
+    }
+
+    yType interpolate(const xType &x) const noexcept {
+        int k = find_lower_boundary(m_points, x);
+        xType t = (x - m_points[k]) / (m_points[k + 1] - m_points[k]);
+        return (1 - t) * m_values[k] + t * m_values[k + 1] +
+               t * (1 - t) * ((1 - t) * m_a[k] + t * m_b[k]);
+    }
 };

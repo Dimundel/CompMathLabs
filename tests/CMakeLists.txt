@@ -6,3 +6,6 @@ target_link_libraries(interpolation_test CompMathLabs gtest)
 
 add_executable(three_diagonal_matrix_test three_diagonal_matrix_test.cpp)
 target_link_libraries(three_diagonal_matrix_test CompMathLabs gtest)
+
+add_executable(spline_test spline_test.cpp)
+target_link_libraries(spline_test CompMathLabs gtest)
