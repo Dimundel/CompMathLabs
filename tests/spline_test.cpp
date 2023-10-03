@@ -3,13 +3,6 @@
 
 const double ERROR = 1e-3;
 
-TEST(FindLowerBoundary, FindLowerBoundary) {
-    ASSERT_EQ(find_lower_boundary({-1, 0, 1}, 1), 2);
-    ASSERT_EQ(find_lower_boundary({-1, 0, 1}, 0), 1);
-    ASSERT_EQ(find_lower_boundary({-1, 0, 1}, 0.5), 1);
-    ASSERT_EQ(find_lower_boundary({-1, 0, 1}, -0.5), 0);
-}
-
 TEST(SplineTest, Interpolation) {
     std::vector<double> points{-1, 0, 1};
     std::vector<double> values{1, 2, 5};

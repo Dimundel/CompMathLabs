@@ -1,24 +1,7 @@
+#include <algorithm>
 #include <array>
 #include <type_traits>
 #include <vector>
-
-template <typename RealType>
-int find_lower_boundary(const std::vector<RealType> &array, RealType x) {
-    int low = 0;
-    int high = array.size() - 1;
-    int mid;
-    while (low <= high) {
-        mid = low + (high - low) / 2;
-        if (array[mid] == x) {
-            return mid;
-        } else if (array[mid] < x) {
-            low = mid + 1;
-        } else {
-            high = mid - 1;
-        }
-    }
-    return low - 1;
-}
 
 /** класс для работы с трехдиагональной матрицей **/
 template <typename Type> class ThreeDiagonalMatrix {
@@ -145,7 +128,9 @@ public:
     }
 
     yType interpolate(const xType &x) const noexcept {
-        int k = find_lower_boundary(m_points, x);
+        int k = (std::lower_bound(m_points.begin(), m_points.end(), x) -
+                 m_points.begin()) -
+                1;
         xType t = (x - m_points[k]) / (m_points[k + 1] - m_points[k]);
         return (1 - t) * m_values[k] + t * m_values[k + 1] +
                t * (1 - t) * ((1 - t) * m_a[k] + t * m_b[k]);
