@@ -69,14 +69,3 @@ calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
     }
     return (DerivativeCoef<RealType, N>){v_res[0], res};
 }
-
-template <typename RealType, unsigned int N>
-RealType exp_derivative(const RealType x_0, const RealType h,
-                        const std::array<RealType, N> &points) {
-    DerivativeCoef<RealType, N> coefs = calcDerivativeCoef<RealType, N>(points);
-    RealType res = std::exp(x_0) * coefs.centralCoef / h;
-    for (unsigned int i = 0; i < points.size(); ++i) {
-        res += std::exp(x_0 + points[i] * h) * coefs.otherCoefs[i] / h;
-    }
-    return res;
-}
