@@ -45,6 +45,31 @@ calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
     return (DerivativeCoef<RealType, N>){v_res[0], res};
 }
 
+template <typename RealType, unsigned int N, unsigned int L>
+DerivativeCoef<RealType, N>
+calcDerivativeCoef(const std::array<RealType, N> &points) noexcept {
+    Eigen::Matrix<RealType, N + 1, 1> b =
+        Eigen::Matrix<RealType, N + 1, 1>::Zero(N + 1);
+    b(L) = 1;
+    Eigen::Matrix<RealType, N + 1, N + 1> A =
+        Eigen::Matrix<RealType, N + 1, N + 1>::Zero(N + 1, N + 1);
+    for (unsigned int i = 0; i <= N; ++i) {
+        A(0, i) = 1;
+    }
+    for (unsigned int j = 1; j <= N; ++j) {
+        for (unsigned int i = 0; i < N; ++i) {
+            A(j, i + 1) = A(j - 1, i + 1) * points[i] / j;
+        }
+    }
+    Eigen::Matrix<RealType, N + 1, 1> v_res = A.colPivHouseholderQr().solve(b);
+
+    std::array<RealType, N> res;
+    for (unsigned int i = 0; i < N; ++i) {
+        res[i] = v_res[i + 1];
+    }
+    return (DerivativeCoef<RealType, N>){v_res[0], res};
+}
+
 template <typename RealType, unsigned int N>
 RealType exp_derivative(const RealType x_0, const RealType h,
                         const std::array<RealType, N> &points) {
