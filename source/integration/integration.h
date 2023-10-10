@@ -1,4 +1,5 @@
 #include <array>
+#include <numeric>
 #include <type_traits>
 
 template <typename A> struct ArgumentGetter;
@@ -72,7 +73,6 @@ decltype(auto) integrate(
     const typename ArgumentGetter<Callable>::Argument &start, // начало отрезка
     const typename ArgumentGetter<Callable>::Argument &end // конец отрезка
 ) {
-    // weights = Weights<RealTypem N>
     RealType semi_sum = (start + end) / 2;
     RealType semi_dif = (end - start) / 2;
     RealType temp_sum = 0;
@@ -93,11 +93,12 @@ decltype(auto) integrate(
     const Dif<typename ArgumentGetter<Callable>::Argument>
         &dx // Длина подотрезка
 ) {
-    RealType res = 0;
     const int num = (end - start) / dx + 1;
     Dif<typename ArgumentGetter<Callable>::Argument> delta =
         (end - start) / num;
-    for (unsigned int i = 0; i < num; ++i) {
+    decltype(auto) res =
+        integrate<Callable, RealType, N>(func, start, start + delta);
+    for (unsigned int i = 1; i < num; ++i) {
         res += integrate<Callable, RealType, N>(func, start + i * delta,
                                                 start + (i + 1) * delta);
     }
