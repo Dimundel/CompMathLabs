@@ -1,14 +1,19 @@
 add_executable(numerical_differentiation_test numerical_differentiation_test.cpp)
 target_link_libraries(numerical_differentiation_test CompMathLabs gtest)
+add_test(NAME numerical_differentiation_test COMMAND numerical_differentiation_test)
 
 add_executable(interpolation_test interpolation_test.cpp)
 target_link_libraries(interpolation_test CompMathLabs gtest)
+add_test(NAME interpolation_test COMMAND interpolation_test)
 
 add_executable(three_diagonal_matrix_test three_diagonal_matrix_test.cpp)
 target_link_libraries(three_diagonal_matrix_test CompMathLabs gtest)
+add_test(NAME three_diagonal_matrix_test COMMAND three_diagonal_matrix_test)
 
 add_executable(spline_test spline_test.cpp)
 target_link_libraries(spline_test CompMathLabs gtest)
+add_test(NAME spline_test COMMAND spline_test)
 
 add_executable(integration_test integration_test.cpp)
 target_link_libraries(integration_test CompMathLabs gtest)
+add_test(NAME integration_test COMMAND integration_test)
