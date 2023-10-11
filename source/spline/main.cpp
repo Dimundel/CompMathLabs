@@ -34,7 +34,7 @@ int main() {
     // N = 5
     std::vector<double> x5(linspace<double>(0, 10, 5));
     std::vector<double> y5(exp<double>(x5));
-    CubicSpline<double, double> spline5(x5, y5);
+    CubicSpline<double, double> spline5(x5, y5, 1, std::exp(10));
 
     std::ofstream data;
     data.open("data5.txt");
@@ -46,7 +46,7 @@ int main() {
     // N = 10
     std::vector<double> x10(linspace<double>(0, 10, 10));
     std::vector<double> y10(exp<double>(x10));
-    CubicSpline<double, double> spline10(x10, y10);
+    CubicSpline<double, double> spline10(x10, y10, 1, std::exp(10));
 
     data.open("data10.txt");
     for (unsigned int i = 0; i < 1000; ++i) {
@@ -58,7 +58,7 @@ int main() {
     // N = 20
     std::vector<double> x20(linspace<double>(0, 10, 20));
     std::vector<double> y20(exp<double>(x20));
-    CubicSpline<double, double> spline20(x20, y20);
+    CubicSpline<double, double> spline20(x20, y20, 1, std::exp(10));
 
     data.open("data20.txt");
     for (unsigned int i = 0; i < 1000; ++i) {
@@ -70,7 +70,7 @@ int main() {
     // N = 40
     std::vector<double> x40(linspace<double>(0, 10, 40));
     std::vector<double> y40(exp<double>(x40));
-    CubicSpline<double, double> spline40(x40, y40);
+    CubicSpline<double, double> spline40(x40, y40, 1, std::exp(10));
 
     data.open("data40.txt");
     for (unsigned int i = 0; i < 1000; ++i) {
@@ -82,7 +82,7 @@ int main() {
     // N = 80
     std::vector<double> x80(linspace<double>(0, 10, 80));
     std::vector<double> y80(exp<double>(x80));
-    CubicSpline<double, double> spline80(x80, y80);
+    CubicSpline<double, double> spline80(x80, y80, 1, std::exp(10));
 
     data.open("data80.txt");
     for (unsigned int i = 0; i < 1000; ++i) {
@@ -94,7 +94,7 @@ int main() {
     // N = 160
     std::vector<double> x160(linspace<double>(0, 10, 160));
     std::vector<double> y160(exp<double>(x160));
-    CubicSpline<double, double> spline160(x160, y160);
+    CubicSpline<double, double> spline160(x160, y160, 1, std::exp(10));
 
     data.open("data160.txt");
     for (unsigned int i = 0; i < 1000; ++i) {
