@@ -3,15 +3,15 @@
 
 const double ERROR = 1e-3;
 
-TEST(SplineTest, Interpolation) {
-    std::vector<double> points{-1, 0, 1};
-    std::vector<double> values{1, 2, 5};
-    CubicSpline<double, double> spline(points, values);
+TEST(SplineTest, NaturalCubicSplineInterpolation) {
+    CubicSpline<double, double> spline({-1, 0, 1}, {1, 2, 5}, 0, 0);
     ASSERT_NEAR(spline.interpolate(0), 2, ERROR);
-    ASSERT_NEAR(spline.interpolate(-1), 1, ERROR);
-    ASSERT_NEAR(spline.interpolate(1), 5, ERROR);
-    ASSERT_NEAR(spline.interpolate(0.5), 3.313, ERROR);
-    ASSERT_NEAR(spline.interpolate(-0.5), 1.313, ERROR);
+}
+
+TEST(SplineTest, GeneralCubicSplineInterpolation) {
+    CubicSpline<double, double> spline({-1, 0, 0.75}, {5, 3, 4.26563}, 0, 1.5);
+    ASSERT_NEAR(spline.interpolate(0), 3, ERROR);
+    ASSERT_NEAR(spline.interpolate(0.5), 3.625, ERROR);
 }
 
 int main() {

@@ -29,6 +29,9 @@ template <typename numeratorType, typename denominatorType>
 using DivisType =
     decltype(std::declval<numeratorType>() / std::declval<denominatorType>());
 
+template <typename Type>
+using DiffType = decltype(std::declval<Type>() - std::declval<Type>());
+
 /** Функция для решения методм  прогонки **/
 template <typename mType, typename cType>
 std::vector<DivisType<cType, mType>>
@@ -53,11 +56,13 @@ solve(const ThreeDiagonalMatrix<mType> &matrix,
     return solution;
 }
 
-/**
- * xType - тип аргумента x.
- * yType - тип значения функции y
- */
 template <typename xType, typename yType> class CubicSpline {
+    /*** Какие-то поля ***/
+
+    using DeltaXType = DiffType<xType>;
+    using DerivType = DivisType<DiffType<yType>, DeltaXType>;
+    using Deriv2Type = DivisType<DiffType<DerivType>, DeltaXType>;
+
 private:
     std::vector<xType> m_points;
     std::vector<yType> m_values;
@@ -65,9 +70,12 @@ private:
     std::vector<DivisType<yType, xType>> m_b;
 
 public:
-    CubicSpline(const std::vector<xType> &points, // Значения x
-                const std::vector<yType> &values  // значения y
-                )
+    CubicSpline(
+        const std::vector<xType> &points, // Значения x
+        const std::vector<yType> &values, // значения y
+        const Deriv2Type &first, // значение для левой второй производной
+        const Deriv2Type &second // значение для правой второй производной
+        )
         : m_points{points}, m_values{values} {
         unsigned int N = points.size();
         std::vector<xType> points_differences;
@@ -100,7 +108,8 @@ public:
         std::vector<DivisType<yType, xType>> column;
         column.reserve(N);
         column.push_back(3 * (values_differences[0]) /
-                         (points_differences[0] * points_differences[0]));
+                             (points_differences[0] * points_differences[0]) -
+                         first / 2);
         for (int i = 0; i < N - 2; ++i) {
             column.push_back(
                 3 * (values_differences[i] /
@@ -110,7 +119,8 @@ public:
         }
         column.push_back(
             3 * (values_differences[N - 2]) /
-            (points_differences[N - 2] * points_differences[N - 2]));
+                (points_differences[N - 2] * points_differences[N - 2]) -
+            second / (-2));
 
         std::vector<DivisType<yType, xType>> k = solve(matrix, column);
 
