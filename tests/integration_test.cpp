@@ -2,7 +2,7 @@
 #include <functional>
 #include <gtest/gtest.h>
 
-const double ERROR = 1e-3;
+const double ERROR = 1e-6;
 double func_square(const double x) { return x * x; }
 double some_polynomial(const double x) {
     return 4 * x * x * x - 3 * x * x - 5 * x + 6;
@@ -25,6 +25,12 @@ TEST(Integration, Integration) {
     auto res2 = integrate<decltype(some_polynomial), double, 5>(some_polynomial,
                                                                 -2, 3, 0.1);
     ASSERT_NEAR(res2, 47.5, ERROR);
+}
+
+TEST(RungeRichardsonIntegration, Integration) {
+    auto res1 = integrateRungeRichardson<decltype(func_square), double, 5>(
+        func_square, -4, -2, 1e-20);
+    ASSERT_NEAR(res1, 56. / 3., ERROR);
 }
 
 int main() {

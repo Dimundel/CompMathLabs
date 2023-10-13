@@ -27,24 +27,34 @@ double sin_function(double x) { return std::sin(x); }
 
 int main() {
     std::ofstream data;
-    std::array<double, 1000> h = linspace<double, 1000>(-3, 1);
-    h = powof10<double, 1000>(h);
+    std::array<double, 1000> errors = linspace<double, 1000>(-10, -1);
+    errors = powof10<double, 1000>(errors);
 
-    data.open("N3.txt");
+    // data.open("N3.txt");
+    // for (unsigned int i = 0; i < 1000; ++i) {
+    //     data << std::setprecision(16)
+    //          << integrate<decltype(sin_function), double, 3>(sin_function,
+    //          0.0,
+    //                                                          10.0, h[i])
+    //          << std::endl;
+    // }
+    // data.close();
+
+    // data.open("N5.txt");
+    // for (unsigned int i = 0; i < 1000; ++i) {
+    //     data << std::setprecision(16)
+    //          << integrate<decltype(sin_function), double, 5>(sin_function,
+    //          0.0,
+    //                                                          10.0, h[i])
+    //          << std::endl;
+    // }
+    // data.close();
+
+    data.open("rungerichardson.txt");
     for (unsigned int i = 0; i < 1000; ++i) {
         data << std::setprecision(16)
-             << integrate<decltype(sin_function), double, 3>(sin_function,
-             0.0,
-                                                             10.0, h[i])
-             << std::endl;
-    }
-    data.close();
-
-    data.open("N5.txt");
-    for (unsigned int i = 0; i < 1000; ++i) {
-        data << std::setprecision(16)
-             << integrate<decltype(sin_function), double, 5>(sin_function, 0.0,
-                                                             10.0, h[i])
+             << integrateRungeRichardson<decltype(sin_function), double, 3>(
+                    sin_function, 0.0, 10.0, errors[i])
              << std::endl;
     }
     data.close();

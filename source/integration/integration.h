@@ -1,4 +1,5 @@
 #include <array>
+#include <cmath>
 #include <numeric>
 #include <type_traits>
 
@@ -103,4 +104,25 @@ decltype(auto) integrate(
                                                 start + (i + 1) * delta);
     }
     return res;
+}
+
+template <typename Callable, typename RealType, std::size_t N>
+decltype(auto) integrateRungeRichardson(
+    const Callable &func,
+    const typename ArgumentGetter<Callable>::Argument &start,
+    const typename ArgumentGetter<Callable>::Argument &end,
+    const RealType error) {
+    Dif<typename ArgumentGetter<Callable>::Argument> h = (end - start) / 2.;
+    decltype(auto) res1 = integrate<Callable, RealType, N>(func, start, end, h);
+    decltype(auto) res2 =
+        integrate<Callable, RealType, N>(func, start, end, h / 2);
+    decltype(auto) res_dif = std::abs(res1 - res2);
+    for (Dif<typename ArgumentGetter<Callable>::Argument> i = h / 4.;
+         res_dif >= error; i /= 2.) {
+        res1 = res2;
+        res2 = integrate<Callable, RealType, N>(func, start, end, i / 2.);
+        res_dif = std::abs(res1 - res2);
+    }
+
+    return res2 + (res2 - res1) / (std::pow(2, N) - 1);
 }
