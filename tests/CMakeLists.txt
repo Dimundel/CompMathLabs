@@ -17,3 +17,7 @@ add_test(NAME spline_test COMMAND spline_test)
 add_executable(integration_test integration_test.cpp)
 target_link_libraries(integration_test CompMathLabs gtest)
 add_test(NAME integration_test COMMAND integration_test)
+
+add_executable(kepler_solver_test kepler_solver_test.cpp)
+target_link_libraries(kepler_solver_test CompMathLabs gtest)
+add_test(NAME kepler_solver_test COMMAND kepler_solver_test)
