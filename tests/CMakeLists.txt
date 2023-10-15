@@ -21,3 +21,7 @@ add_test(NAME integration_test COMMAND integration_test)
 add_executable(kepler_solver_test kepler_solver_test.cpp)
 target_link_libraries(kepler_solver_test CompMathLabs gtest)
 add_test(NAME kepler_solver_test COMMAND kepler_solver_test)
+
+add_executable(SOR_test SOR_test.cpp)
+target_link_libraries(SOR_test CompMathLabs gtest)
+add_test(NAME SOR_test COMMAND SOR_test)
