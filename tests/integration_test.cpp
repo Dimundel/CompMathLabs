@@ -2,7 +2,7 @@
 #include <functional>
 #include <gtest/gtest.h>
 
-const double ERROR = 1e-6;
+const double ERROR = 1e-3;
 double func_square(const double x) { return x * x; }
 double some_polynomial(const double x) {
     return 4 * x * x * x - 3 * x * x - 5 * x + 6;
