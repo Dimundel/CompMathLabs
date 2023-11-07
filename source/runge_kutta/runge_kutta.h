@@ -18,15 +18,6 @@ struct RK4Table {
 };
 
 template <typename T, std::size_t N>
-double operator*(const std::array<T, N> &v1, const std::array<T, N> &v2) {
-    double res = 0;
-    for (std::size_t i = 0; i < N; ++i) {
-        res += v1[i] * v2[i];
-    }
-    return res;
-}
-
-template <typename T, std::size_t N>
 std::array<T, N> operator+(const std::array<T, N> &v1,
                            const std::array<T, N> &v2) {
     std::array<T, N> res;
@@ -62,6 +53,26 @@ std::array<T, N> operator*(const double n, const std::array<T, N> &vec) {
     return vec * n;
 }
 
+class Cube {
+
+public:
+    static constexpr unsigned int dim = 1; // размерность задачи
+
+    using Argument = double; // тип аргумента, тип t
+
+    using State = std::array<double, dim>; // состояние
+
+    struct StateAndArg {
+        State state;
+        Argument arg;
+    };
+
+    /*** Вычисляет правую часть ДУ - функцию f***/
+    std::array<double, dim> calc(const StateAndArg &stateAndArg) const {
+        return {stateAndArg.arg * stateAndArg.arg * stateAndArg.arg};
+    }
+};
+
 class Oscillator {
 
 public:
@@ -91,14 +102,15 @@ integrate(const typename RHS::StateAndArg &initialState,
     step = (endTime - initialState.arg) / num;
     std::array<std::array<double, RHS::dim>, Table::stages> k;
     std::vector<typename RHS::StateAndArg> res;
+    res.reserve(num + 1);
     res.push_back(initialState);
     for (unsigned int i = 1; i < num + 1; ++i) {
         for (unsigned int j = 0; j < Table::stages; ++j) {
-            k[j] = rhs.calc({res[i - 1].state + k * Table::table[j] * step,
-                             initialState.arg + i * step + Table::cColumn[j]});
+            k[j] = rhs.calc({res.back().state + k * Table::table[j] * step,
+                             res.back().arg + step * Table::cColumn[j]});
         }
-        res.push_back({res[i - 1].state + step * k * Table::bString,
-                       initialState.arg + step * i});
+        res.push_back({res.back().state + k * Table::bString * step,
+                       res.back().arg + step});
     }
     return res;
 }
