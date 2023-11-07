@@ -1,2 +1,2 @@
 add_library(CompMathLabs INTERFACE)
-target_include_directories(CompMathLabs INTERFACE numerical_differentiation interpolation spline integration nonlinear_equations)
+target_include_directories(CompMathLabs INTERFACE numerical_differentiation interpolation spline integration nonlinear_equations runge_kutta)

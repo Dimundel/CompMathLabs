@@ -25,3 +25,7 @@ add_test(NAME kepler_solver_test COMMAND kepler_solver_test)
 add_executable(SOR_test SOR_test.cpp)
 target_link_libraries(SOR_test CompMathLabs gtest)
 add_test(NAME SOR_test COMMAND SOR_test)
+
+add_executable(runge_kutta_test runge_kutta_test.cpp)
+target_link_libraries(runge_kutta_test CompMathLabs gtest)
+add_test(NAME runge_kutta_test COMMAND runge_kutta_test)
