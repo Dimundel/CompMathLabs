@@ -21,6 +21,16 @@ TEST(RungeKutta, SolveCube) {
     ASSERT_NEAR(res[500].state[0], 156.25, ERROR);
 }
 
+TEST(DormandPrince45, SolveCube){
+    DP45 table;
+    Cube cube;
+    Eigen::Vector<double, 1> a{0};
+    Cube::StateAndArg initCond{a, 0};
+    StepControl stepControl{1e-5, 1e-2, 1e-6, 0.01};
+    auto res = integrate<DP45, Cube>(initCond, 5., stepControl, cube);
+    ASSERT_NEAR(res[res.size()-2].state[0], 156.25, ERROR);
+}
+
 int main() {
     ::testing::InitGoogleTest();
     return RUN_ALL_TESTS();
