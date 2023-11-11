@@ -62,6 +62,53 @@ public:
     }
 };
 
+class ArenstorfOrbit {
+
+private:
+    const double k1 = 0.012277471;
+    const double k2 = 1 - k1;
+
+public:
+    static constexpr unsigned int dim = 4; // размерность задачи
+
+    using Argument = double; // тип аргумента, тип t
+
+    using State = Eigen::Vector<double, dim>; // состояние
+
+    struct StateAndArg {
+        State state;
+        Argument arg;
+    };
+
+    /*** Вычисляет правую часть ДУ - функцию f***/
+    Eigen::Vector<double, dim> calc(const StateAndArg &stateAndArg) const {
+        return Eigen::Vector<double, dim>{
+            stateAndArg.state(2), stateAndArg.state(3),
+            stateAndArg.state(0) + 2 * stateAndArg.state(3) -
+                k2 * (stateAndArg.state(0) + k1) /
+                    (std::pow(((stateAndArg.state(0) + k1) *
+                                   (stateAndArg.state(0) + k1) +
+                               stateAndArg.state(1) * stateAndArg.state(1)),
+                              3. / 2.)) -
+                k1 * (stateAndArg.state(0) - k2) /
+                    (std::pow(((stateAndArg.state(0) - k2) *
+                                   (stateAndArg.state(0) - k2) +
+                               stateAndArg.state(1) * stateAndArg.state(1)),
+                              3. / 2.)),
+            stateAndArg.state(1) - 2 * stateAndArg.state(2) -
+                k2 * stateAndArg.state(1) /
+                    (std::pow(((stateAndArg.state(0) + k1) *
+                                   (stateAndArg.state(0) + k1) +
+                               stateAndArg.state(1) * stateAndArg.state(1)),
+                              3. / 2.)) -
+                k1 * stateAndArg.state(1) /
+                    (std::pow(((stateAndArg.state(0) - k2) *
+                                   (stateAndArg.state(0) - k2) +
+                               stateAndArg.state(1) * stateAndArg.state(1)),
+                              3. / 2.))};
+    }
+};
+
 template <typename Table,
           typename RHS> // таблица бутчера и класс правой части f
 std::vector<typename RHS::StateAndArg>
