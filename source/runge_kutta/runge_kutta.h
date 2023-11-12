@@ -82,30 +82,22 @@ public:
 
     /*** Вычисляет правую часть ДУ - функцию f***/
     Eigen::Vector<double, dim> calc(const StateAndArg &stateAndArg) const {
+        const double d1 =
+            std::pow((stateAndArg.state(0) + k1) * (stateAndArg.state(0) + k1) +
+                         stateAndArg.state(1) * stateAndArg.state(1),
+                     3. / 2.);
+        const double d2 =
+            std::pow((stateAndArg.state(0) - k2) * (stateAndArg.state(0) - k2) +
+                         stateAndArg.state(1) * stateAndArg.state(1),
+                     3. / 2.);
         return Eigen::Vector<double, dim>{
             stateAndArg.state(2), stateAndArg.state(3),
             stateAndArg.state(0) + 2 * stateAndArg.state(3) -
-                k2 * (stateAndArg.state(0) + k1) /
-                    (std::pow(((stateAndArg.state(0) + k1) *
-                                   (stateAndArg.state(0) + k1) +
-                               stateAndArg.state(1) * stateAndArg.state(1)),
-                              3. / 2.)) -
-                k1 * (stateAndArg.state(0) - k2) /
-                    (std::pow(((stateAndArg.state(0) - k2) *
-                                   (stateAndArg.state(0) - k2) +
-                               stateAndArg.state(1) * stateAndArg.state(1)),
-                              3. / 2.)),
+                k2 * (stateAndArg.state(0) + k1) / d1 -
+                k1 * (stateAndArg.state(0) - k2) / d2,
             stateAndArg.state(1) - 2 * stateAndArg.state(2) -
-                k2 * stateAndArg.state(1) /
-                    (std::pow(((stateAndArg.state(0) + k1) *
-                                   (stateAndArg.state(0) + k1) +
-                               stateAndArg.state(1) * stateAndArg.state(1)),
-                              3. / 2.)) -
-                k1 * stateAndArg.state(1) /
-                    (std::pow(((stateAndArg.state(0) - k2) *
-                                   (stateAndArg.state(0) - k2) +
-                               stateAndArg.state(1) * stateAndArg.state(1)),
-                              3. / 2.))};
+                k2 * stateAndArg.state(1) / d1 -
+                k1 * stateAndArg.state(1) / d2};
     }
 };
 
@@ -205,14 +197,14 @@ integrate(const typename RHS::StateAndArg &initialState,
         error = (sum_of_k_4 - sum_of_k_5).norm();
         if (error > stepControl.tolerance) {
             step = std::clamp(
-                step * std::pow(error / stepControl.tolerance, 1. / 5.),
+                step * std::pow(stepControl.tolerance / error, 1. / 5.),
                 stepControl.minStep, stepControl.maxStep);
             continue;
         } else {
             res.push_back({sum_of_k_5, res.back().arg + step});
             currentTime += step;
             step = std::clamp(
-                step * std::pow(error / stepControl.tolerance, 1. / 5.),
+                step * std::pow(stepControl.tolerance / error, 1. / 5.),
                 stepControl.minStep, stepControl.maxStep);
         }
     }
