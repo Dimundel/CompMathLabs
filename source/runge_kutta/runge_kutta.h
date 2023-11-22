@@ -6,19 +6,8 @@
 #include <numeric>
 #include <vector>
 
-/* Это таблица Бутчера для метода Рунге-Кутты 4 порядка. Я ее не заполнил */
-
-// а я заполнил
-
-struct RK4Table {
-    static constexpr unsigned int stages = 4;
-    static constexpr std::array<std::array<double, stages>, stages> table = {
-        {{0, 0, 0, 0}, {1. / 2, 0, 0, 0}, {0, 1. / 2, 0, 0}, {0, 0, 1, 0}}};
-    static constexpr std::array<double, stages> cColumn = {0, 1. / 2., 1. / 2.,
-                                                           1};
-    static constexpr std::array<double, stages> bString = {1. / 6., 1. / 3,
-                                                           1. / 3., 1. / 6.};
-};
+#ifndef RUNGE_KUTTA_H
+#define RUNGE_KUTTA_H
 
 class Cube {
 
@@ -101,6 +90,22 @@ public:
     }
 };
 
+namespace RungeKutta {
+
+/* Это таблица Бутчера для метода Рунге-Кутты 4 порядка. Я ее не заполнил */
+
+// а я заполнил
+
+struct RK4Table {
+    static constexpr unsigned int stages = 4;
+    static constexpr std::array<std::array<double, stages>, stages> table = {
+        {{0, 0, 0, 0}, {1. / 2, 0, 0, 0}, {0, 1. / 2, 0, 0}, {0, 0, 1, 0}}};
+    static constexpr std::array<double, stages> cColumn = {0, 1. / 2., 1. / 2.,
+                                                           1};
+    static constexpr std::array<double, stages> bString = {1. / 6., 1. / 3,
+                                                           1. / 3., 1. / 6.};
+};
+
 template <typename Table,
           typename RHS> // таблица бутчера и класс правой части f
 std::vector<typename RHS::StateAndArg>
@@ -132,6 +137,9 @@ integrate(const typename RHS::StateAndArg &initialState,
     }
     return res;
 }
+} // namespace RungeKutta
+
+namespace DormandPrince {
 
 struct DP45 {
     static constexpr unsigned int stages = 7;
@@ -210,3 +218,6 @@ integrate(const typename RHS::StateAndArg &initialState,
     }
     return res;
 }
+} // namespace DormandPrince
+
+#endif
