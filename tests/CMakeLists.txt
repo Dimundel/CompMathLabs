@@ -29,3 +29,7 @@ add_test(NAME SOR_test COMMAND SOR_test)
 add_executable(runge_kutta_test runge_kutta_test.cpp)
 target_link_libraries(runge_kutta_test CompMathLabs gtest)
 add_test(NAME runge_kutta_test COMMAND runge_kutta_test)
+
+add_executable(bdf_test bdf_test.cpp)
+target_link_libraries(bdf_test CompMathLabs gtest)
+add_test(NAME bdf_test COMMAND bdf_test)
