@@ -1,6 +1,8 @@
 #include "runge_kutta.h"
 #include <gtest/gtest.h>
 
+using namespace RungeKutta;
+
 const double ERROR = 1e-3;
 
 TEST(RungeKutta, SolveOscillator) {

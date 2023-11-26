@@ -9,6 +9,8 @@
 #ifndef RUNGE_KUTTA_H
 #define RUNGE_KUTTA_H
 
+namespace RungeKutta {
+
 class Cube {
 
 public:
@@ -89,8 +91,6 @@ public:
                 k1 * stateAndArg.state(1) / d2};
     }
 };
-
-namespace RungeKutta {
 
 /* Это таблица Бутчера для метода Рунге-Кутты 4 порядка. Я ее не заполнил */
 
