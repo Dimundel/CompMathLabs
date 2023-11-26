@@ -1,7 +1,7 @@
 #ifndef BDF_H
 #define BDF_H
 
-#include "runge_kutta.h"
+#include "../runge_kutta/runge_kutta.h"
 #include <eigen3/Eigen/Dense>
 #include <functional>
 #include <iostream>
@@ -77,13 +77,55 @@ public:
     }
 };
 
+class EarthOrbit {
+private:
+    const double mu = 398600.4415888;
+    const double epsilon = 3. / 2. * mu * 6378.14 * 6378.14 * 1.082 / 1000;
+
+public:
+    static constexpr unsigned int dim = 6; // размерность задачи
+
+    using Argument = double; // тип аргумента, тип t
+
+    using State = Eigen::Vector<double, dim>; // состояние
+
+    struct StateAndArg {
+        State state;
+        Argument arg;
+    };
+
+    /*** Вычисляет разницу двух состояний (решения нелиненого уравнения) ***/
+    State calcDif(const State &first, const State &second) const {
+        return second - first;
+    }
+
+    /*** Вычисляет правую часть ДУ - функцию f***/
+    Eigen::Vector<double, dim> calc(const StateAndArg &stateAndArg) const {
+        return Eigen::Vector<double, dim>{
+            stateAndArg.state[3],
+            stateAndArg.state[4],
+            stateAndArg.state[5],
+            -mu / (stateAndArg.state[0] * stateAndArg.state[0]) +
+                epsilon /
+                    (stateAndArg.state[0] * stateAndArg.state[0] *
+                     stateAndArg.state[0] * stateAndArg.state[0]) *
+                    (3 * std::sin(stateAndArg.state[2]) *
+                         std::sin(stateAndArg.state[2]) -
+                     1),
+            0,
+            -epsilon /
+                (stateAndArg.state[0] * stateAndArg.state[0] *
+                 stateAndArg.state[0] * stateAndArg.state[0]) *
+                std::sin(2 * stateAndArg.state[2])};
+    }
+};
+
 struct IntegrationParameters {
     double step; // шаг интегрирования
     double epsilon; // точность решения нелинейного уравнения
-    unsigned int maxIter; // максимальное количество итераций для решения
-                          // нелинейного уравнения
+    unsigned int maxIter; // максимальное количество итераций для
+                          // решения нелинейного уравнения
 };
-
 /***
 BDF - структура с коэффициентами метода
 RHS - правая часть Д.У.
