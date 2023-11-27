@@ -145,7 +145,6 @@ integrate(const typename RHS::StateAndArg &initialState,
         RungeKutta::integrate<RKTable, RHS>(
             initialState, initialState.arg + step * (BDF::size - 1), step, rhs);
     Eigen::Vector<double, RHS::dim> initGuess;
-    std::size_t count = 0;
     double current_time = initialState.arg + step * 4;
     Eigen::Vector<double, RHS::dim> p;
     Eigen::Vector<double, RHS::dim> k;
@@ -166,7 +165,6 @@ integrate(const typename RHS::StateAndArg &initialState,
         p = res.back().state + step * rhs.calc(res.back());
         k = rhs.calc({p, current_time});
         c = res.back().state + step / 2 * (k + rhs.calc(res.back()));
-        count = 0;
         initGuess = c;
         Eigen::Vector<double, RHS::dim> solution = func(initGuess);
         Eigen::Vector<double, RHS::dim> solution_next;
