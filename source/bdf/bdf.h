@@ -126,6 +126,19 @@ struct IntegrationParameters {
     unsigned int maxIter; // максимальное количество итераций для
                           // решения нелинейного уравнения
 };
+
+template <typename RHS>
+Eigen::Vector<double, RHS::dim>
+predictor_corrector(const typename RHS::StateAndArg &stateAndArg,
+                    const double h, const RHS &rhs) {
+    Eigen::Vector<double, RHS::dim> p =
+        stateAndArg.state + h * rhs.calc(stateAndArg);
+    Eigen::Vector<double, RHS::dim> k = rhs.calc({p, stateAndArg.arg + h});
+    Eigen::Vector<double, RHS::dim> c =
+        stateAndArg.state + h / 2 * (k + rhs.calc(stateAndArg));
+    return c;
+}
+
 /***
 BDF - структура с коэффициентами метода
 RHS - правая часть Д.У.
@@ -145,16 +158,13 @@ integrate(const typename RHS::StateAndArg &initialState,
         RungeKutta::integrate<RKTable, RHS>(
             initialState, initialState.arg + step * (BDF::size - 1), step, rhs);
     Eigen::Vector<double, RHS::dim> initGuess;
-    double current_time = initialState.arg + step * 4;
-    Eigen::Vector<double, RHS::dim> p;
-    Eigen::Vector<double, RHS::dim> k;
-    Eigen::Vector<double, RHS::dim> c;
+    double next_time = initialState.arg + step * 4;
 
     for (std::size_t i = 4; i < num + 1; ++i) {
         auto func = [&res, step, &rhs,
-                     current_time](const Eigen::Vector<double, RHS::dim> &x)
+                     next_time](const Eigen::Vector<double, RHS::dim> &x)
             -> Eigen::Vector<double, RHS::dim> {
-            const typename RHS::StateAndArg a = {x, current_time};
+            const typename RHS::StateAndArg a = {x, next_time};
             Eigen::Vector<double, RHS::dim> temp =
                 step * rhs.calc(a) * BDF::alpha.back();
             for (std::size_t i = 0; i < BDF::size; ++i) {
@@ -162,10 +172,7 @@ integrate(const typename RHS::StateAndArg &initialState,
             }
             return temp;
         };
-        p = res.back().state + step * rhs.calc(res.back());
-        k = rhs.calc({p, current_time});
-        c = res.back().state + step / 2 * (k + rhs.calc(res.back()));
-        initGuess = c;
+        initGuess = predictor_corrector<RHS>(res.back(), step, rhs);
         Eigen::Vector<double, RHS::dim> solution = func(initGuess);
         Eigen::Vector<double, RHS::dim> solution_next;
         for (std::size_t count = 0; count < parameters.maxIter; ++count) {
@@ -176,8 +183,8 @@ integrate(const typename RHS::StateAndArg &initialState,
             }
             solution = solution_next;
         }
-        res.push_back({solution_next, current_time});
-        current_time += step;
+        res.push_back({solution_next, next_time});
+        next_time += step;
     }
     return res;
 }
