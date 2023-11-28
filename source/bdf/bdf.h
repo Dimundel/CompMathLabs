@@ -139,6 +139,25 @@ predictor_corrector(const typename RHS::StateAndArg &stateAndArg,
     return c;
 }
 
+template <typename RHS>
+Eigen::Vector<double, RHS::dim> fixed_point_iteration(
+    const std::function<Eigen::Vector<double, RHS::dim>(
+        const Eigen::Vector<double, RHS::dim> &x)>
+        func,
+    const IntegrationParameters &parameters, const RHS &rhs,
+    const typename Eigen::Vector<double, RHS::dim> &initGuess) {
+    Eigen::Vector<double, RHS::dim> solution = func(initGuess);
+    Eigen::Vector<double, RHS::dim> solution_next;
+    for (std::size_t count = 0; count < parameters.maxIter; ++count) {
+        solution_next = func(solution);
+        if (rhs.calcDif(solution_next, solution).norm() < parameters.epsilon) {
+            break;
+        }
+        solution = solution_next;
+    }
+    return solution_next;
+}
+
 /***
 BDF - структура с коэффициентами метода
 RHS - правая часть Д.У.
@@ -173,17 +192,9 @@ integrate(const typename RHS::StateAndArg &initialState,
             return temp;
         };
         initGuess = predictor_corrector<RHS>(res.back(), step, rhs);
-        Eigen::Vector<double, RHS::dim> solution = func(initGuess);
-        Eigen::Vector<double, RHS::dim> solution_next;
-        for (std::size_t count = 0; count < parameters.maxIter; ++count) {
-            solution_next = func(solution);
-            if (rhs.calcDif(solution_next, solution).norm() <
-                parameters.epsilon) {
-                break;
-            }
-            solution = solution_next;
-        }
-        res.push_back({solution_next, next_time});
+        res.push_back(
+            {fixed_point_iteration<RHS>(func, parameters, rhs, initGuess),
+             next_time});
         next_time += step;
     }
     return res;
