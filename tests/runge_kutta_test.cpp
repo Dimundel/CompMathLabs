@@ -27,7 +27,7 @@ TEST(RungeKutta, SolveCube) {
 TEST(DormandPrince45, SolveOscillator) {
     DormandPrince::DP45 table;
     Oscillator oscillator;
-    DormandPrince::StepControl stepControl{1e-5, 1e-2, 1e-6, 0.01};
+    DormandPrince::StepControl stepControl{1e-9, 1e-5, 1e-3, 1e-5};
     auto res = DormandPrince::integrate<DormandPrince::DP45, Oscillator>(
         {{0, 1}, 0}, 1., stepControl, oscillator);
     ASSERT_NEAR(res[res.size() - 2].state[1], 0.540302, ERROR);
