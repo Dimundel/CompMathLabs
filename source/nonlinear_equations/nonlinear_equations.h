@@ -1,5 +1,8 @@
-#include <cmath>
+#ifndef NONLINEAR_EQ_H
+#define NONLINEAR_EQ_H
 
+#include <cmath>
+#include <eigen3/Eigen/Dense>
 /**
     Решает уравнение Кеплера методом Ньютона
     * ecc - эксцентриситет, принадлежит (0, 1)
@@ -8,8 +11,8 @@
     * tol - точность, с которой нужно отыскать решение
 
     Рекомендуемое поведение. Если решение не нашлось за maxIter итераций -
-выбрасывать исключение. Если приближения к решению между итерациями меняются не
-более, чем на tol, то решение достигнуто.
+выбрасывать исключение. Если приближения к решению между итерациями меняются
+не более, чем на tol, то решение достигнуто.
 **/
 double keplerSolver(double ecc, double meanAnomaly, unsigned int maxIter,
                     double tol) {
@@ -43,3 +46,5 @@ decltype(auto) solve(const Callable &func, // функция F
     }
     return res;
 }
+
+#endif
