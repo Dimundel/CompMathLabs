@@ -1,2 +1,5 @@
 build
 .vscode
+source/bdf/data_cube.txt
+source/bdf/data_oscillator.txt
+source/bdf/earth_data.txt
