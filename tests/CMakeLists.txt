@@ -33,3 +33,7 @@ add_test(NAME runge_kutta_test COMMAND runge_kutta_test)
 add_executable(bdf_test bdf_test.cpp)
 target_link_libraries(bdf_test CompMathLabs gtest)
 add_test(NAME bdf_test COMMAND bdf_test)
+
+add_executable(shooting_method_test shooting_method_test.cpp)
+target_link_libraries(shooting_method_test CompMathLabs gtest)
+add_test(NAME shooting_method_test COMMAND shooting_method_test)
