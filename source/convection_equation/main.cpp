@@ -33,13 +33,13 @@ int main() {
     file.close();
 
     ConvEqSolverLaxWendroff<NX> solver4(1, grid);
-    ConvEqSolverLaxWendroff<NX> solver5(1.01, grid);
+    ConvEqSolverLaxWendroff<NX> solver5(1.1, grid);
     ConvEqSolverLaxWendroff<NX> solver6(0.6, grid);
     file.open("data_lw1.txt");
     solver4.solve(0, 20, file);
     file.close();
     file.open("data_lw101.txt");
-    solver5.solve(0, 20, file);
+    solver5.solve(0, 70, file);
     file.close();
     file.open("data_lw06.txt");
     solver6.solve(0, 20, file);
